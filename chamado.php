@@ -20,6 +20,8 @@
     $upload = new Upload($foto, 1000, 800, "fotos/");
     $anexo_chamado = $upload->salvar();
 
+    $chamado -> time();
+
     $chamado->setTitulo_chamado($titulo_chamado);
     $chamado->setPrioridade_chamado($prioridade_chamado);
     $chamado->setDescricao_chamado($descricao_chamado);

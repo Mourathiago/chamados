@@ -53,7 +53,7 @@ class chamado extends modelo{
 		$stmt->bindParam(':descricao_chamado', $this->descricao_chamado, PDO::PARAM_STR);
 		$stmt->bindParam(':anexo_chamado', $this->anexo_chamado, PDO::PARAM_STR);
 		$stmt->bindParam(':status_chamado', $this->status_chamado, PDO::PARAM_STR);
-		$stmt->bindParam(':data_chamado', date('Y-m-d'), PDO::PARAM_STR);
+		$stmt->bindParam(':data_chamado', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 		$stmt->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 		return $stmt->execute();
 

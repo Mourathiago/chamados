@@ -4,11 +4,21 @@
   if(!isset($_SESSION['logged']) || $_SESSION['logged'] != true){
     header("Location: entrar.php?mensagem=Usuário não logado");
   }
+
+  function __autoload($classe){
+
+    require_once 'classes/'.$classe.'.class.php';
+  }
   
   if (!empty($_GET['mensagem']) || !$_GET['mensagem'] == null) {
-     $mensagem = $_GET['mensagem'];
-   } 
+    $mensagem = $_GET['mensagem'];
+  }
 
+  $id = $_GET['id'];
+
+  $sql = "SELECT * FROM user WHERE userid =".$id;
+  $stmt = db::prepare($sql);
+  $stmt->execute();
    
 ?>
 <!DOCTYPE html>
@@ -27,7 +37,7 @@
 
       <nav>
         <div class="nav-wrapper">
-          <a href="" class="brand-logo">CDM - Chamados</a>
+          <a href="index.php" class="brand-logo">CDM - Chamados</a>
           <?php if($_SESSION['user_setor'] == "informatica") { ?>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="cadastrar.php">Cadastrar Usuários</a></li>
@@ -68,42 +78,42 @@
         <div class="col s10 offset-s1">
           <div class="card grey lighten-4 z-depth-4 card bg-opacity-8">
             <div class="card-content black-text">
-              <span class="card-title center">Abrir Chamado</span>
+              <span class="card-title center">Cadastrar Usuário</span>
               <div class="row">
-                <form class="col s12" enctype="multipart/form-data" method="post" action="chamado.php">
+                <form class="col s12" method="post" action="update.php?id=<?php echo $id; ?>">
+                  <?php if($stmt->rowcount() <= 0){ ?>
+                    <h2 class="center">Usuário inexistente</h2>
+                  <?php }?>
+                  <?php foreach ($stmt as $value) { ?>
                   <div class="row">
                     <div class="input-field col s6">
-                      <input id="titulo" type="text" name="titulo" required>
-                      <label for="titulo">Titulo do chamado</label>
+                      <input id="nome" type="text" name="nome" value="<?php echo $value['nome_user']; ?>" required>
+                      <label for="nome">Nome do usuário</label>
                     </div>
                     <div class="input-field col s6">
-                      <select name="nivel" required>
-                        <option value="" disabled selected>Escolha o nivel da urgencia do chamado</option>
-                        <option value="1">Baixo</option>
-                        <option value="2">Medio</option>
-                        <option value="3">Alto</option>
+                      <select name="setor" required>
+                        <option value="<?php echo $value['setor_user']; ?>" disabled selected><?php echo $value['setor_user']; ?></option>
+                        <option value="informatica">Informatica</option>
+                        <option value="rh">RH</option>
+                        <option value="recepcao">Recepção</option>
                       </select>
-                      <label>Nivel do Chamado</label>
+                      <label>Setor</label>
                     </div>
                   </div>
                   <div class="row">
-                    <div class="input-field col s12">
-                      <textarea id="descricao" class="materialize-textarea" name="descricao"></textarea>
-                      <label for="descricao">Descrição do chamado</label>
+                    <div class="input-field col s6">
+                      <input id="login" type="text" name="login" value="<?php echo $value['login_user']; ?>" required>
+                      <label for="login">Login do usuário</label>
                     </div>
-                  </div>
-                  <div class="file-field input-field">
-                    <div class="btn">
-                      <span>Anexo</span>
-                      <input type="file" name='anexo'>
-                    </div>
-                    <div class="file-path-wrapper">
-                      <input class="file-path" type="text">
+                    <div class="input-field col s6">
+                      <input id="senha" type="password" name="senha" required>
+                      <label for="senha">Senha do usuário</label>
                     </div>
                   </div>
                   <div>
-                    <button type="submit" class="btn waves-effect waves-light right">Criar chamado</button>
+                    <button type="submit" class="btn waves-effect waves-light right">Cadastrar</button>
                   </div>
+                  <?php } ?>
                 </form>
               </div>
             </div>
