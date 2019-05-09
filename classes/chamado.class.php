@@ -53,7 +53,7 @@ class chamado extends modelo{
 		$stmt->bindParam(':descricao_chamado', $this->descricao_chamado, PDO::PARAM_STR);
 		$stmt->bindParam(':anexo_chamado', $this->anexo_chamado, PDO::PARAM_STR);
 		$stmt->bindParam(':status_chamado', $this->status_chamado, PDO::PARAM_STR);
-		$stmt->bindParam(':data_chamado', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+		$stmt->bindParam(':data_chamado', date('d/m/Y'), PDO::PARAM_STR);
 		$stmt->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 		return $stmt->execute();
 
@@ -64,6 +64,15 @@ class chamado extends modelo{
 		$sql  = "UPDATE $this->table SET status_chamado = :status_chamado WHERE chamadoid = :chamadoid";
 		$stmt = db::prepare($sql);
 		$stmt->bindParam(':status_chamado', $this->status_chamado, PDO::PARAM_STR);
+		$stmt->bindParam(':chamadoid', $id, PDO::PARAM_INT);
+		return $stmt->execute();
+
+	}
+
+	public function delete($id){
+
+		$sql  = "DELETE FROM $this->table WHERE chamadoid = :chamadoid";
+		$stmt = db::prepare($sql);
 		$stmt->bindParam(':chamadoid', $id, PDO::PARAM_INT);
 		return $stmt->execute();
 

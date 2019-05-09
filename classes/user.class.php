@@ -56,4 +56,13 @@ class user extends modelo{
 
 	}
 
+	public function delete($id){
+
+		$sql  = "DELETE FROM $this->table WHERE userid = :userid";
+		$stmt = db::prepare($sql);
+		$stmt->bindParam(':userid', $id, PDO::PARAM_INT);
+		return $stmt->execute();
+
+	}
+
 }

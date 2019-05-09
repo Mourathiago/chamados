@@ -18,6 +18,8 @@ abstract class modelo extends db {
 
 	abstract public function update($id);
 
+	abstract public function delete($id);	
+
 	public function time(){
 		date_default_timezone_set("America/Campo_Grande");
 	}

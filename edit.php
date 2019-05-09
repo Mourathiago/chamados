@@ -40,6 +40,7 @@
           <a href="index.php" class="brand-logo">CDM - Chamados</a>
           <?php if($_SESSION['user_setor'] == "informatica") { ?>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="user.php">Usuários</a></li>
             <li><a href="cadastrar.php">Cadastrar Usuários</a></li>
             <li><a href="chamados.php">Chamados Abertos</a></li>
             <li><a href="sair.php">Sair</a></li>

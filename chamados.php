@@ -16,11 +16,11 @@
 
 
   if ($_SESSION['user_setor'] == "informatica") {
-    $sql = "SELECT titulo_chamado, descricao_chamado, prioridade_chamado, status_chamado, data_chamado FROM chamado";
+    $sql = "SELECT titulo_chamado, descricao_chamado, prioridade_chamado, status_chamado, data_chamado, chamadoid FROM chamado WHERE status_chamado = 'A fazer' || status_chamado = 'Fazendo' ";
     $stmt = db::prepare($sql);
     $stmt -> execute();
   } else {
-    $sql = "SELECT titulo_chamado, descricao_chamado, prioridade_chamado, status_chamado, data_chamado FROM chamado WHERE userid =".$_SESSION['user_id'];
+    $sql = "SELECT titulo_chamado, descricao_chamado, prioridade_chamado, status_chamado, data_chamado, chamadoid FROM chamado WHERE userid =".$_SESSION['user_id']."AND status_chamado = 'A fazer' || status_chamado = 'Fazendo' AND userid =".$_SESSION['user_id'];
     $stmt = db::prepare($sql);
     $stmt -> execute();
   }
@@ -47,6 +47,7 @@
           <a href="index.php" class="brand-logo">CDM - Chamados</a>
           <?php if($_SESSION['user_setor'] == "informatica") { ?>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="user.php">Usuários</a></li>
             <li><a href="cadastrar.php">Cadastrar Usuários</a></li>
             <li><a href="chamados.php">Chamados Abertos</a></li>
             <li><a href="sair.php">Sair</a></li>
@@ -98,6 +99,7 @@
                         <th>Data</th>
                         <th>Prioridade</th>
                         <th>Status</th>
+                        <th>Ação</th>
                       </tr>
 
                     </thead>
@@ -118,6 +120,7 @@
                                 } ?>
                         </td>
                         <td><?php echo $value['status_chamado']; ?></td>
+                        <td><a class="btn waves-effect waves-light blue" href="ler_chamado.php?id=<?php echo $value['chamadoid']; ?>">Ver mais</a></td>
                       </tr>
 
                       <?php } ?>

@@ -4,11 +4,22 @@
   if(!isset($_SESSION['logged']) || $_SESSION['logged'] != true){
     header("Location: entrar.php?mensagem=Usuário não logado");
   }
+
+  function __autoload($classe){
+
+    require_once 'classes/'.$classe.'.class.php';
+  }
   
   if (!empty($_GET['mensagem']) || !$_GET['mensagem'] == null) {
      $mensagem = $_GET['mensagem'];
    } 
-   
+  
+  $id = $_GET['id'];
+
+  $sql = "SELECT * FROM chamado c, user u WHERE c.userid = u.userid and chamadoid = ". $id;
+  $stmt = db::prepare($sql);
+  $stmt -> execute();
+
 ?>
 <!DOCTYPE html>
   <html>
@@ -26,7 +37,7 @@
 
       <nav>
         <div class="nav-wrapper">
-          <a href="" class="brand-logo">CDM - Chamados</a>
+          <a href="index.php" class="brand-logo">CDM - Chamados</a>
           <?php if($_SESSION['user_setor'] == "informatica") { ?>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="user.php">Usuários</a></li>
@@ -68,39 +79,44 @@
         <div class="col s10 offset-s1">
           <div class="card grey lighten-4 z-depth-4 card bg-opacity-8">
             <div class="card-content black-text">
-              <span class="card-title center">Cadastrar Usuário</span>
+              <?php foreach ($stmt as $value) { ?>
+              <span class="card-title center"><?php echo $value['titulo_chamado']; ?></span>
               <div class="row">
-                <form class="col s12" method="post" action="cadastro.php">
+                <div class="col s12">
                   <div class="row">
-                    <div class="input-field col s6">
-                      <input id="nome" type="text" name="nome" required>
-                      <label for="nome">Nome do usuário</label>
+                    <div class="col s6">
+                      <div class="card grey lighten-1 z-depth-4">
+                        <div class="card-content">
+                          <img class="materialboxed" style="width: 100%; height: 100%;" src="fotos/<?php echo $value['anexo_chamado']; ?>">
+                        </div>
+                      </div>
                     </div>
-                    <div class="input-field col s6">
-                      <select name="setor" required>
-                        <option value="" disabled selected>Escolha o setor</option>
-                        <option value="informatica">Informatica</option>
-                        <option value="rh">RH</option>
-                        <option value="recepcao">Recepção</option>
-                      </select>
-                      <label>Setor</label>
+                    <div class="col s6">
+                      <h6>Data: <?php echo $value['data_chamado']; ?></h6>
+                      <h6>Prioridade: <?php if($value['prioridade_chamado'] == '1' || $value['prioridade_chamado'] == 1){
+                                  echo "Baixa";
+                                } elseif ($value['prioridade_chamado'] == '2' || $value['prioridade_chamado'] == 2) {
+                                  echo "Média";
+                                } elseif ($value['prioridade_chamado'] == '3' || $value['prioridade_chamado'] == 3) {
+                                  echo "Alta";
+                                } ?></h6>
+                      <h6>Status: <?php echo $value['status_chamado']; ?></h6>
+                      <h6>Usuário requisitou: <?php echo $value['nome_user']; ?></h6>
+                      <h6>Setor: <?php echo $value['setor_user']; ?></h6>
+                      <p><h6>Descrição do Chamado:</h6> <?php echo $value['descricao_chamado']; ?></p>
+                      <div class="section"></div>
+                      <?php if($_SESSION['user_setor'] == "informatica" && $value['status_chamado'] == "A fazer") { ?>
+                      <a class="btn waves-effect waves-light green right" href="aceitar.php?id=<?php echo $value['chamadoid']; ?>">Aceitar Chamado</a>
+                      <?php } elseif ($_SESSION['user_setor'] == "informatica" && $value['status_chamado'] == "Fazendo") { ?>
+                      <a class="btn waves-effect waves-light green right" href="finalizar.php?id=<?php echo $value['chamadoid']; ?>">Finalizar Chamado</a>
+                      <?php } else{ ?>
+                      <a class="btn waves-effect waves-light blue right">Chamado Finalizado</a>
+                      <?php } ?>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="input-field col s6">
-                      <input id="login" type="text" name="login" required>
-                      <label for="login">Login do usuário</label>
-                    </div>
-                    <div class="input-field col s6">
-                      <input id="senha" type="password" name="senha" required>
-                      <label for="senha">Senha do usuário</label>
-                    </div>
-                  </div>
-                  <div>
-                    <button type="submit" class="btn waves-effect waves-light right">Cadastrar</button>
-                  </div>
-                </form>
+                </div>
               </div>
+            <?php } ?>
             </div>
           </div>
         </div>
@@ -112,6 +128,10 @@
       <script type="text/javascript">
         $(document).ready(function(){
           $('select').formSelect();
+        });
+
+        $(document).ready(function(){
+          $('.materialboxed').materialbox();
         });
       </script>
     </body>
